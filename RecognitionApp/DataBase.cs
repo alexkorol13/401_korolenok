@@ -22,6 +22,11 @@ namespace RecognitionApp
         public int y0 { get; set; }
         public int x1 { get; set; }
         public int y1 { get; set; }
+
+        public bool Equals(RecognitionObject other)
+        {
+            return type == other.type && x0 == other.x0 && x1 == other.x1 && y0 == other.y0 && y1 == other.y1; 
+        }
     }
 
     public class DataBaseContext : DbContext
@@ -42,7 +47,8 @@ namespace RecognitionApp
         public static bool compareItems(Image first, Image second)
         {
             /* returns True if elements are equal and False otherwise */
-            return first.ImageHash == second.ImageHash && first.image == second.image;
+            return first.ImageHash == second.ImageHash && first.image.SequenceEqual(second.image);
+            //first.image == second.image;
         }
         public static int Hash(byte[] image)
         {

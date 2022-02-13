@@ -9,8 +9,8 @@ using RecognitionApp;
 namespace RecognitionApp.Migrations
 {
     [DbContext(typeof(DataBaseContext))]
-    [Migration("20220213134625_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20220213233922_Start")]
+    partial class Start
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
