@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Threading;
@@ -61,7 +60,7 @@ namespace Library
 
             int n_images = Directory.GetFiles(DirPath).Length;
             int cnt = 0;
-            Dictionary<string, int> detected = new Dictionary<string, int>();
+            
             List<Task> tasks = new List<Task>();
             var locker = new Object();
 
@@ -81,10 +80,10 @@ namespace Library
                 bitmapQueue.TryDequeue(out Bitmap bitmap);
 
                 var predict = predictionEngine.Predict(new YoloV4BitmapData() { Image = bitmap });
-
                 tasks.Add(Task.Factory.StartNew(() =>
                 {
-                    RecognitionResponse response = new RecognitionResponse();
+                    RecognitionResponse response = new RecognitionResponse(bitmap);
+                    Dictionary<string, int> detected = new Dictionary<string, int>();
                     if (!cts.Token.IsCancellationRequested)
                     {
                         var results = predict.GetResults(classes, 0.3f, 0.7f);
@@ -94,9 +93,11 @@ namespace Library
                                 detected[res.Label]++;
                             else
                                 detected.Add(res.Label, 1);
-                            response.Rectangles.Add(new List<float> { res.BBox[0], res.BBox[1], res.BBox[2], res.BBox[3] });
+
+                            var coords = new List<float> { res.BBox[0], res.BBox[1], res.BBox[2], res.BBox[3] };
+                            response.objects.Add(new ImageObject(res.Label, coords));
                         }
-                        response.Objects = detected;
+                        response.ObjectsDict = detected;
 
                         lock (locker)
                         {

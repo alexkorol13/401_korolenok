@@ -25,7 +25,7 @@ namespace App
                         while (responseQueue.Count == 0) { }
                         responseQueue.TryDequeue(out var res);
                         Console.Write($"\n{res.progress}% done. ");
-                        foreach (var obj in res.Objects)
+                        foreach (var obj in res.ObjectsDict)
                             Console.Write($"{obj.Key}: {obj.Value}, ");
                     }
                 }
